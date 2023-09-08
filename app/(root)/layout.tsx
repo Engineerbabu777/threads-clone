@@ -27,7 +27,7 @@ export default function RootLayout({
           
           <TopBar />
            
-           <main>
+           <main className="flex ">
             <LeftSideBar />
 
              <section className="main-container">
