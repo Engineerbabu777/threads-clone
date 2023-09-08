@@ -1,12 +1,15 @@
+
 import Image from "next/image";
 import Link from "next/link";
-import {SignedIn , SignOutButton,OrganizationSwitcher} from '@clerk/nextjs'
+import {SignedIn , SignOutButton,OrganizationSwitcher,currentUser} from '@clerk/nextjs'
 import {dark} from '@clerk/themes';
 
 
 
-
 export default function TopBar() {
+
+  
+
 
 
     return(<>

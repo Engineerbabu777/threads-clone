@@ -20,7 +20,8 @@ import React ,{ useState } from 'react';
 import { Textarea } from '../ui/textarea';
 import { isBase64Image } from '@/lib/utils';
 import {useUploadThing} from '@/lib/uploadthing';
-
+import { updateUser } from '@/lib/actions/user.action';
+import {useRouter , usePathname} from 'next/navigation';
 
 type Props = {
     user: { id: string, ObjectId: string, username: string, name: string, bio: string, image: string, };
@@ -32,6 +33,9 @@ export default function AccountProfile({ user, btnTitle }: Props) {
     const [files , setFiles] = useState<File[]>([]);
     const {startUpload} = useUploadThing("media");
 
+    const router = useRouter();
+    const pathname = usePathname();
+
     const form = useForm({
         resolver: zodResolver(userValidations),
         defaultValues: {
@@ -42,7 +46,7 @@ export default function AccountProfile({ user, btnTitle }: Props) {
         }
     });
 
-    async function onSubmit(values: z.infer<typeof userValidations>) {
+    async function onSubmit(values: any) {
         const blob = values.photo_image;
         const hasImagedChanged = isBase64Image(blob);
 
@@ -55,6 +59,13 @@ export default function AccountProfile({ user, btnTitle }: Props) {
         }
 
         // UPDATE YOUR PROFILE!!
+        await updateUser(user.id , values.username , values.name , values.bio , values.image , pathname);
+
+        if(pathname === '/profile/edit'){
+            router.back();
+        } else{
+            router.push('/');
+        }
 
     }
 
