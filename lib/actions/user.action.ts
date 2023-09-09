@@ -33,3 +33,24 @@ export const updateUser = async(
     }
 
 }
+
+
+export const fetchUser = async(userId:string) => {
+    mongooseConnect() // CREATING CONNECTION WITH OUR DATABASE!
+
+    try{
+        const user = await userModel.findOne({id:userId})
+        //  .populate({
+        //     path:'communities',
+        //     model:'community',
+        //  });
+
+        return user;
+
+
+    } catch(err:any) {
+        throw new Error(`Failed to fetch user with error: ${err.message}`)
+          
+    }
+
+}
