@@ -76,5 +76,41 @@ export const fetchThreadById = async(id:string) => {
         console.log("ERROR: ", err.message);
     }
 
+}
+
+
+
+export default async function addCommentToThread(threadId:string, commentText:string, userId:string, path:string) {
+    mongooseConnect();
+
+    try{
+        // FIND THREAD BY ID!
+        const thread = await threadModel.findById(threadId);
+
+        if(!thread) throw new Error('Thread Not Found!')
+
+        // CREATES NEW THREAD WITH COMMENT TEXT!
+        const newThread = new threadModel({
+            text:commentText , 
+            author:userId,
+            parentId: threadId,
+        });
+
+        // SAVE THREAD TO DATABASE!
+        const savedCommentThread = await newThread.save();
+
+        thread.children.push(savedCommentThread);
+
+        const updatedThread = await threadModel.findByIdAndUpdate(threadId, {
+            $push: { children: savedCommentThread }
+        });
+
+        console.log("thread Updated: " ,updatedThread);
+
+        revalidatePath(path);
+
+    } catch(err:any) {
+        console.log(`ERROR WHILE ADDING COMMENT TO THREAD: ${err.message}`);
+    }
 
 }
