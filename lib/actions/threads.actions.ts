@@ -55,3 +55,26 @@ export const fetchThreads = async (pageNumber=1 , pageSize=20) => {
 
 
 }
+
+export const fetchThreadById = async(id:string) => {
+    mongooseConnect();
+
+    try{
+
+        const thread = await threadModel.findById(id)
+        .populate({path:'author',model:userModel}).populate({path:'children',populate:[{
+            path:'author' , model:userModel , select:'_id id image name parentId'
+        },{
+            path:'children', model:threadModel , populate:{
+                path:'author',model:userModel , select:'_id id image name parentId',
+            }
+        }]}).exec();
+
+        return thread; 
+
+    } catch (err:any) {
+        console.log("ERROR: ", err.message);
+    }
+
+
+}
